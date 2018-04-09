@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.handlers;
+package org.dsa.iot.redis.handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,9 +14,9 @@ import org.dsa.iot.dslink.node.actions.table.Table;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
 import org.dsa.iot.dslink.util.handler.Handler;
-import org.dsa.iot.jdbc.driver.JdbcConnectionHelper;
-import org.dsa.iot.jdbc.model.JdbcConfig;
-import org.dsa.iot.jdbc.model.JdbcConstants;
+import org.dsa.iot.redis.driver.RedisConnectionHelper;
+import org.dsa.iot.redis.model.RedisConfig;
+import org.dsa.iot.redis.model.RedisConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +25,9 @@ public class QueryHandler implements Handler<ActionResult> {
     private static final Logger LOG = LoggerFactory
             .getLogger(QueryHandler.class);
 
-    private JdbcConfig config;
+    private RedisConfig config;
 
-    public QueryHandler(JdbcConfig config) {
+    public QueryHandler(RedisConfig config) {
         this.config = config;
     }
 
@@ -35,7 +35,7 @@ public class QueryHandler implements Handler<ActionResult> {
     public void handle(ActionResult event) {
         LOG.debug("Entering query connection handle");
 
-        Value value = event.getParameter(JdbcConstants.SQL);
+        Value value = event.getParameter(RedisConstants.SQL);
 
         if (value != null && value.getString() != null
                 && !value.getString().isEmpty()) {
@@ -125,7 +125,7 @@ public class QueryHandler implements Handler<ActionResult> {
         Connection connection;
         if (config.isPoolable()) {
             if (config.getDataSource() == null) {
-                config.setDataSource(JdbcConnectionHelper
+                config.setDataSource(RedisConnectionHelper
                                              .configureDataSource(config));
             }
             connection = config.getDataSource().getConnection();
@@ -149,7 +149,7 @@ public class QueryHandler implements Handler<ActionResult> {
         } else {
             LOG.warn(message, e);
         }
-        config.getNode().getChild(JdbcConstants.STATUS, false)
+        config.getNode().getChild(RedisConstants.STATUS, false)
               .setValue(new Value(message));
     }
 }

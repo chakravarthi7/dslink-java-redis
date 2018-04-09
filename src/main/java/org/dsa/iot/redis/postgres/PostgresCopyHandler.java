@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.postgres;
+package org.dsa.iot.redis.postgres;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -12,10 +12,10 @@ import org.dsa.iot.dslink.node.actions.table.Row;
 import org.dsa.iot.dslink.node.actions.table.Table;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.util.handler.Handler;
-import org.dsa.iot.jdbc.driver.JdbcConnectionHelper;
-import org.dsa.iot.jdbc.handlers.QueryHandler;
-import org.dsa.iot.jdbc.model.JdbcConfig;
-import org.dsa.iot.jdbc.model.JdbcConstants;
+import org.dsa.iot.redis.driver.RedisConnectionHelper;
+import org.dsa.iot.redis.handlers.QueryHandler;
+import org.dsa.iot.redis.model.RedisConfig;
+import org.dsa.iot.redis.model.RedisConstants;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
 import org.slf4j.Logger;
@@ -29,9 +29,9 @@ public class PostgresCopyHandler implements Handler<ActionResult> {
     private static final Logger LOG = LoggerFactory
             .getLogger(QueryHandler.class);
 
-    private JdbcConfig config;
+    private RedisConfig config;
 
-    public PostgresCopyHandler(JdbcConfig config) {
+    public PostgresCopyHandler(RedisConfig config) {
         this.config = config;
     }
 
@@ -39,14 +39,14 @@ public class PostgresCopyHandler implements Handler<ActionResult> {
     public void handle(ActionResult event) {
         LOG.debug("Entering query connection handle");
 
-        Value vSql = event.getParameter(JdbcConstants.SQL);
+        Value vSql = event.getParameter(RedisConstants.SQL);
         if (vSql == null || vSql.getString() == null
                 || vSql.getString().isEmpty()) {
             setStatusMessage("sql is empty");
             return;
         }
 
-        Value vRow = event.getParameter(JdbcConstants.ROWS);
+        Value vRow = event.getParameter(RedisConstants.ROWS);
         if (vRow == null || vRow.getString() == null
                 || vRow.getString().isEmpty()) {
             setStatusMessage("row is empty");
@@ -108,7 +108,7 @@ public class PostgresCopyHandler implements Handler<ActionResult> {
         Connection connection;
         if (config.isPoolable()) {
             if (config.getDataSource() == null) {
-                config.setDataSource(JdbcConnectionHelper
+                config.setDataSource(RedisConnectionHelper
                                              .configureDataSource(config));
             }
             connection = config.getDataSource().getConnection();
@@ -128,7 +128,7 @@ public class PostgresCopyHandler implements Handler<ActionResult> {
 
     private void setStatusMessage(String message) {
         LOG.debug(message);
-        config.getNode().getChild(JdbcConstants.STATUS, false)
+        config.getNode().getChild(RedisConstants.STATUS, false)
               .setValue(new Value(message));
     }
 }

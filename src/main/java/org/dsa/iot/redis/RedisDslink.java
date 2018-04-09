@@ -1,9 +1,9 @@
-package org.dsa.iot.jdbc;
+package org.dsa.iot.redis;
 
 import org.dsa.iot.dslink.DSLink;
 import org.dsa.iot.dslink.DSLinkFactory;
 import org.dsa.iot.dslink.DSLinkHandler;
-import org.dsa.iot.jdbc.provider.JdbcProvider;
+import org.dsa.iot.redis.provider.RedisProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +20,9 @@ import java.util.zip.ZipInputStream;
  *
  * @author pshvets
  */
-public class JdbcDslink extends DSLinkHandler {
+public class RedisDslink extends DSLinkHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcDslink.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RedisDslink.class);
 
     @Override
     public boolean isResponder() {
@@ -36,7 +36,7 @@ public class JdbcDslink extends DSLinkHandler {
         try {
             URLClassLoader loader;
             {
-                ClassLoader l = JdbcDslink.class.getClassLoader();
+                ClassLoader l = RedisDslink.class.getClassLoader();
             	System.out.println("L " + l);
                 loader = (URLClassLoader) l;
               
@@ -109,13 +109,13 @@ public class JdbcDslink extends DSLinkHandler {
     @Override
     public void onResponderConnected(DSLink link) {
     	System.out.println("In Main CLass - onResponderConnected Method");
-        LOG.info("JDBC DSLink started");
-        JdbcProvider provider = new JdbcProvider();
+        LOG.info("REDIS DSLink started");
+        RedisProvider provider = new RedisProvider();
         provider.run(link);
     }
 
     public static void main(String[] args) {
     	System.out.println("In Main CLass - Main Method");
-        DSLinkFactory.start(args, new JdbcDslink());
+        DSLinkFactory.start(args, new RedisDslink());
     }
 }

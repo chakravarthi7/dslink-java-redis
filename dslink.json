@@ -1,12 +1,12 @@
 {
-  "name": "dslink-java-jdbc",
+  "name": "dslink-java-redis",
   "version": "0.1.1",
-  "description": "Java JDBC DSLink",
+  "description": "Java REDIS DSLink",
   "license": "Apache",
   "author": {
     "name": "Peter Shvets"
   },
-  "main": "bin/dslink-java-jdbc",
+  "main": "bin/dslink-java-redis",
   "repository": {
     "type": "git",
     "url": "https://github.com/IOT-DSA/dslink-java-jdbc"
@@ -17,7 +17,7 @@
   "configs": {
     "name": {
       "type": "string",
-      "default": "jdbc"
+      "default": "RedisJava"
     },
     "broker": {
       "type": "url"
@@ -39,7 +39,7 @@
     },
     "handler_class": {
       "type": "string",
-      "default": "org.dsa.iot.jdbc.JdbcDslink"
+      "default": "org.dsa.iot.redis.RedisDslink"
     }
   }
 }

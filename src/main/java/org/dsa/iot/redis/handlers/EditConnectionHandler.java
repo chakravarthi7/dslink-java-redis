@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.handlers;
+package org.dsa.iot.redis.handlers;
 
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.NodeBuilder;
@@ -6,10 +6,10 @@ import org.dsa.iot.dslink.node.actions.ActionResult;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.util.handler.Handler;
 import org.dsa.iot.dslink.util.json.JsonObject;
-import org.dsa.iot.jdbc.driver.JdbcConnectionHelper;
-import org.dsa.iot.jdbc.model.JdbcConfig;
-import org.dsa.iot.jdbc.model.JdbcConstants;
-import org.dsa.iot.jdbc.provider.ActionProvider;
+import org.dsa.iot.redis.driver.RedisConnectionHelper;
+import org.dsa.iot.redis.model.RedisConfig;
+import org.dsa.iot.redis.model.RedisConstants;
+import org.dsa.iot.redis.provider.ActionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +19,9 @@ public class EditConnectionHandler extends ActionProvider implements
     private static final Logger LOG = LoggerFactory
             .getLogger(EditConnectionHandler.class);
 
-    private JdbcConfig config;
+    private RedisConfig config;
 
-    public EditConnectionHandler(JdbcConfig config) {
+    public EditConnectionHandler(RedisConfig config) {
         this.config = config;
     }
 
@@ -29,35 +29,35 @@ public class EditConnectionHandler extends ActionProvider implements
     public void handle(ActionResult event) {
         LOG.debug("Entering edit connection handle");
 
-        Node status = config.getNode().getChild(JdbcConstants.STATUS, false);
+        Node status = config.getNode().getChild(RedisConstants.STATUS, false);
 
-        Value url = event.getParameter(JdbcConstants.URL, new Value(""));
+        Value url = event.getParameter(RedisConstants.URL, new Value(""));
         if (url.getString() == null || url.getString().isEmpty()) {
             status.setValue(new Value("url is empty"));
             return;
         }
 
-        Value user = event.getParameter(JdbcConstants.USER, new Value(""));
-        Value password = event.getParameter(JdbcConstants.PASSWORD);
+        Value user = event.getParameter(RedisConstants.USER, new Value(""));
+        Value password = event.getParameter(RedisConstants.PASSWORD);
 
-        Value driver = event.getParameter(JdbcConstants.DRIVER, new Value(""));
+        Value driver = event.getParameter(RedisConstants.DRIVER, new Value(""));
         if (driver.getString() == null || driver.getString().isEmpty()) {
             status.setValue(new Value("driver is empty"));
             return;
         } else {
             if ("org.postgresql.Driver".equals(driver.getString())) {
-                NodeBuilder builder = config.getNode().createChild(JdbcConstants.COPY, false);
+                NodeBuilder builder = config.getNode().createChild(RedisConstants.COPY, false);
                 builder.setAction(getCopyAction(config));
                 builder.setSerializable(false);
                 builder.build();
             } else {
-                config.getNode().removeChild(JdbcConstants.COPY, false);
+                config.getNode().removeChild(RedisConstants.COPY, false);
             }
         }
 
-        Value timeout = event.getParameter(JdbcConstants.DEFAULT_TIMEOUT,
+        Value timeout = event.getParameter(RedisConstants.DEFAULT_TIMEOUT,
                                            new Value(60));
-        Value poolable = event.getParameter(JdbcConstants.POOLABLE);
+        Value poolable = event.getParameter(RedisConstants.POOLABLE);
 
         LOG.debug("Old configuration is {}", config);
         config.setUrl(url.getString());
@@ -71,7 +71,7 @@ public class EditConnectionHandler extends ActionProvider implements
         // create DataSource if specified
         config.setTimeout((Integer) timeout.getNumber());
         if (poolable.getBool()) {
-            config.setDataSource(JdbcConnectionHelper
+            config.setDataSource(RedisConnectionHelper
                                          .configureDataSource(config));
         } else {
             config.setDataSource(null);
@@ -85,14 +85,14 @@ public class EditConnectionHandler extends ActionProvider implements
         Node connection = config.getNode();
 
         JsonObject object = connection
-                .getAttribute(JdbcConstants.CONFIGURATION).getMap();
-        object.put(JdbcConstants.NAME, config.getName());
-        object.put(JdbcConstants.URL, config.getUrl());
-        object.put(JdbcConstants.USER, config.getUser());
-        object.put(JdbcConstants.DRIVER, config.getDriverName());
-        object.put(JdbcConstants.POOLABLE, config.isPoolable());
-        object.put(JdbcConstants.DEFAULT_TIMEOUT, config.getTimeout());
-        connection.setAttribute(JdbcConstants.CONFIGURATION, new Value(object));
+                .getAttribute(RedisConstants.CONFIGURATION).getMap();
+        object.put(RedisConstants.NAME, config.getName());
+        object.put(RedisConstants.URL, config.getUrl());
+        object.put(RedisConstants.USER, config.getUser());
+        object.put(RedisConstants.DRIVER, config.getDriverName());
+        object.put(RedisConstants.POOLABLE, config.isPoolable());
+        object.put(RedisConstants.DEFAULT_TIMEOUT, config.getTimeout());
+        connection.setAttribute(RedisConstants.CONFIGURATION, new Value(object));
         connection.setPassword(config.getPassword());
     }
 }

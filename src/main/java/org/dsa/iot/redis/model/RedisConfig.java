@@ -1,11 +1,11 @@
-package org.dsa.iot.jdbc.model;
+package org.dsa.iot.redis.model;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dsa.iot.dslink.node.Node;
 
-public class JdbcConfig {
+public class RedisConfig {
     private String name;
     private String url;
     private String user;

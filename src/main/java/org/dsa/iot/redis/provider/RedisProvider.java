@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.provider;
+package org.dsa.iot.redis.provider;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,10 +9,10 @@ import org.dsa.iot.dslink.node.NodeManager;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
 import org.dsa.iot.dslink.util.json.JsonObject;
-import org.dsa.iot.jdbc.model.JdbcConfig;
-import org.dsa.iot.jdbc.model.JdbcConstants;
+import org.dsa.iot.redis.model.RedisConfig;
+import org.dsa.iot.redis.model.RedisConstants;
 
-public class JdbcProvider extends ActionProvider {
+public class RedisProvider extends ActionProvider {
 
     /**
      * Starts building Node's tree
@@ -23,12 +23,12 @@ public class JdbcProvider extends ActionProvider {
         NodeManager manager = link.getNodeManager();
         Node superRoot = manager.getNode("/").getNode();
 
-        Node status = superRoot.createChild(JdbcConstants.STATUS, false).build();
+        Node status = superRoot.createChild(RedisConstants.STATUS, false).build();
         status.setValueType(ValueType.STRING);
-        status.setValue(new Value(JdbcConstants.READY));
+        status.setValue(new Value(RedisConstants.READY));
 
         NodeBuilder builder = superRoot
-                .createChild(JdbcConstants.ADD_CONNECTION_ACTION, false);
+                .createChild(RedisConstants.ADD_CONNECTION_ACTION, false);
         builder.setAction(getAddConnectionAction(manager));
         builder.build();
 
@@ -46,62 +46,62 @@ public class JdbcProvider extends ActionProvider {
 
         for (Entry<String, Node> entry : childs.entrySet()) {
             Node node = entry.getValue();
-            if (node.getAttribute(JdbcConstants.ACTION) != null
-                    && node.getAttribute(JdbcConstants.ACTION).getBool()) {
+            if (node.getAttribute(RedisConstants.ACTION) != null
+                    && node.getAttribute(RedisConstants.ACTION).getBool()) {
 
                 JsonObject object = node.getAttribute(
-                        JdbcConstants.CONFIGURATION).getMap();
-                JdbcConfig config = new JdbcConfig();
-                config.setName((String) object.get(JdbcConstants.NAME));
-                config.setUrl((String) object.get(JdbcConstants.URL));
-                config.setUser((String) object.get(JdbcConstants.USER));
+                        RedisConstants.CONFIGURATION).getMap();
+                RedisConfig config = new RedisConfig();
+                config.setName((String) object.get(RedisConstants.NAME));
+                config.setUrl((String) object.get(RedisConstants.URL));
+                config.setUser((String) object.get(RedisConstants.USER));
                 config.setPassword(node.getPassword());
-                config.setPoolable((Boolean) object.get(JdbcConstants.POOLABLE));
-                config.setTimeout((Integer) object.get(JdbcConstants.DEFAULT_TIMEOUT));
-                String driver = object.get(JdbcConstants.DRIVER);
+                config.setPoolable((Boolean) object.get(RedisConstants.POOLABLE));
+                config.setTimeout((Integer) object.get(RedisConstants.DEFAULT_TIMEOUT));
+                String driver = object.get(RedisConstants.DRIVER);
                 config.setDriverName(driver);
                 config.setNode(node);
 
                 NodeBuilder builder = node
-                        .createChild(JdbcConstants.DELETE_CONNECTION, false);
+                        .createChild(RedisConstants.DELETE_CONNECTION, false);
                 builder.setAction(getDeleteConnectionAction(manager));
                 builder.setSerializable(false);
                 builder.build();
 
-                builder = node.createChild(JdbcConstants.EDIT_CONNECTION, false);
+                builder = node.createChild(RedisConstants.EDIT_CONNECTION, false);
                 builder.setAction(getEditConnectionAction(config));
                 builder.setSerializable(false);
                 builder.build();
 
                 {
-                    builder = node.createChild(JdbcConstants.QUERY, false);
+                    builder = node.createChild(RedisConstants.QUERY, false);
                     builder.setAction(getQueryAction(config));
                     builder.setSerializable(false);
                     builder.build();
                 }
                 {
-                    builder = node.createChild(JdbcConstants.STREAMING_QUERY, false);
+                    builder = node.createChild(RedisConstants.STREAMING_QUERY, false);
                     builder.setAction(getStreamingQueryAction(config));
                     builder.setSerializable(false);
                     builder.build();
                 }
 
                 if ("org.postgresql.Driver".equals(driver)) {
-                    builder = node.createChild(JdbcConstants.COPY, false);
+                    builder = node.createChild(RedisConstants.COPY, false);
                     builder.setAction(getCopyAction(config));
                     builder.setSerializable(false);
                     builder.build();
                 }
 
                 {
-                    builder = node.createChild(JdbcConstants.UPDATE, false);
+                    builder = node.createChild(RedisConstants.UPDATE, false);
                     builder.setAction(getUpdateAction(config));
                     builder.setSerializable(false);
                     builder.build();
                 }
 
-                Node status = node.createChild(JdbcConstants.STATUS, false).build();
-                status.setValue(new Value(JdbcConstants.READY));
+                Node status = node.createChild(RedisConstants.STATUS, false).build();
+                status.setValue(new Value(RedisConstants.READY));
             }
         }
     }

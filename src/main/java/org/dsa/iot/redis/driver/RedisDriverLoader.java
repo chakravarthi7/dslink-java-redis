@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.driver;
+package org.dsa.iot.redis.driver;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * @author pshvets
  */
-public class JdbcDriverLoader {
+public class RedisDriverLoader {
     public static void registerDriver(final URL url, String className)
             throws InstantiationException, IllegalAccessException,
             ClassNotFoundException, SQLException {
@@ -28,6 +28,6 @@ public class JdbcDriverLoader {
 
         Driver driver = (Driver) Class.forName(className, true, loader)
                 .newInstance();
-        DriverManager.registerDriver(new JdbcDriverHolder(driver));
+        DriverManager.registerDriver(new RedisDriverHolder(driver));
     }
 }

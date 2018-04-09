@@ -1,7 +1,7 @@
-package org.dsa.iot.jdbc.driver;
+package org.dsa.iot.redis.driver;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.dsa.iot.jdbc.model.JdbcConfig;
+import org.dsa.iot.redis.model.RedisConfig;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -9,10 +9,10 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JdbcConnectionHelper {
+public class RedisConnectionHelper {
     private static String[] cashedDriversName;
 
-    public static BasicDataSource configureDataSource(JdbcConfig config) {
+    public static BasicDataSource configureDataSource(RedisConfig config) {
         BasicDataSource dataSource = new BasicDataSource();
         // dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setDriverClassName(config.getDriverName());

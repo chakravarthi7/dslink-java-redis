@@ -1,4 +1,4 @@
-package org.dsa.iot.jdbc.handlers;
+package org.dsa.iot.redis.handlers;
 
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.NodeManager;

@@ -1,6 +1,6 @@
-package org.dsa.iot.jdbc.model;
+package org.dsa.iot.redis.model;
 
-public class JdbcConstants {
+public class RedisConstants {
 
     public static final String NAME = "name";
     public static final String URL = "url";
