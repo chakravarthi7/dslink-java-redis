@@ -47,7 +47,7 @@ public class EditConnectionHandler extends ActionProvider implements
         } else {
             if ("org.postgresql.Driver".equals(driver.getString())) {
                 NodeBuilder builder = config.getNode().createChild(RedisConstants.COPY, false);
-                builder.setAction(getCopyAction(config));
+              //  builder.setAction(getCopyAction(config));
                 builder.setSerializable(false);
                 builder.build();
             } else {
@@ -79,8 +79,8 @@ public class EditConnectionHandler extends ActionProvider implements
 
         LOG.debug("New configuration is {}", config);
 
-        Node edit = event.getNode();
-        edit.setAction(getEditConnectionAction(config));
+     /*   Node edit = event.getNode();
+        edit.setAction(getEditConnectionAction(config));*/
 
         Node connection = config.getNode();
 

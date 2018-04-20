@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class AddConnectionHandler extends ActionProvider implements
         Handler<ActionResult> {
-
+  
     private static final Logger LOG = LoggerFactory
             .getLogger(AddConnectionHandler.class);
 
@@ -29,13 +29,19 @@ public class AddConnectionHandler extends ActionProvider implements
 
     @Override
     public void handle(ActionResult event) {
+    	
         LOG.debug("Entering add connection handle");
-
+    	
         Value name = event.getParameter(RedisConstants.NAME, new Value(""));
+   
         Node child = manager.getSuperRoot().getChild(name.getString(), false);
+   
         Node status = manager.getSuperRoot().getChild(RedisConstants.STATUS, false);
+      
         if (name.getString() != null && !name.getString().isEmpty()) {
+        	
             if (child != null) {
+          
                 status.setValue(new Value("connection with name "
                                                   + name.getString() + " alredy exist"));
                 return;
@@ -46,23 +52,26 @@ public class AddConnectionHandler extends ActionProvider implements
         }
 
         Value url = event.getParameter(RedisConstants.URL, new Value(""));
+     
         if (url.getString() == null || url.getString().isEmpty()) {
+        
             status.setValue(new Value("url is empty"));
             return;
         }
 
         Value user = event.getParameter(RedisConstants.USER, new Value(""));
-        Value password = event.getParameter(RedisConstants.PASSWORD, new Value(
-                ""));
 
-        Value driver = event.getParameter(RedisConstants.DRIVER, new Value(""));
+        Value password = event.getParameter(RedisConstants.PASSWORD, new Value(""));
+    
+
+      /*  Value driver = event.getParameter(RedisConstants.DRIVER, new Value(""));
         if (driver.getString() == null || driver.getString().isEmpty()) {
             status.setValue(new Value("driver is empty"));
             return;
-        }
+        }*/
 
-        Value timeout = event.getParameter(RedisConstants.DEFAULT_TIMEOUT,
-                                           new Value(60));
+   /*     Value timeout = event.getParameter(RedisConstants.DEFAULT_TIMEOUT,
+                                           new Value(60));*/
         Value poolable = event.getParameter(RedisConstants.POOLABLE);
 
         RedisConfig config = new RedisConfig();
@@ -70,14 +79,16 @@ public class AddConnectionHandler extends ActionProvider implements
         config.setUrl(url.getString());
         config.setUser(user.getString());
         config.setPassword(password.getString().toCharArray());
-        config.setPoolable(poolable.getBool());
-        config.setTimeout((Integer) timeout.getNumber());
-        config.setDriverName(driver.getString());
+      //  config.setPoolable(poolable.getBool());
+       // config.setTimeout((Integer) timeout.getNumber());
+      //  config.setDriverName(driver.getString());
         LOG.debug(config.toString());
-
+        System.out.println(url.getString());
+    //  Jedis jedis = new Jedis(url.getString()); 
         // create DataSource if specified
-        if (poolable.getBool()) {
-            config.setDataSource(RedisConnectionHelper
+      if (poolable.getBool()) {
+    	  System.out.println("In poolable - action connection handler");
+            config.setJedisPoolConfig(RedisConnectionHelper
                                          .configureDataSource(config));
         }
 
@@ -86,10 +97,12 @@ public class AddConnectionHandler extends ActionProvider implements
         object.put(RedisConstants.URL, config.getUrl());
         object.put(RedisConstants.USER, config.getUser());
         object.put(RedisConstants.POOLABLE, config.isPoolable());
-        object.put(RedisConstants.DEFAULT_TIMEOUT, config.getTimeout());
-        object.put(RedisConstants.DRIVER, config.getDriverName());
-
+        System.out.println("object "+object.toString());
+      /*   object.put(RedisConstants.DEFAULT_TIMEOUT, config.getTimeout());
+        object.put(RedisConstants.DRIVER, config.getDriverName());*/
+        
         NodeBuilder builder = manager.createRootNode(name.getString());
+        System.out.println("builder "+builder);
         builder.setAttribute(RedisConstants.ACTION, new Value(true));
         builder.setAttribute(RedisConstants.CONFIGURATION, new Value(object));
         builder.setPassword(password.getString().toCharArray());
@@ -97,33 +110,37 @@ public class AddConnectionHandler extends ActionProvider implements
         config.setNode(conn);
 
         Node connStatus = conn.createChild(RedisConstants.STATUS, false).build();
+        System.out.println("connStatus "+connStatus);
         connStatus.setValueType(ValueType.STRING);
         connStatus.setValue(new Value(RedisConstants.CREATED));
 
         builder = conn.createChild(RedisConstants.DELETE_CONNECTION, false);
+    
         builder.setAction(getDeleteConnectionAction(manager));
         builder.setSerializable(false);
         builder.build();
 
-        builder = conn.createChild(RedisConstants.EDIT_CONNECTION, false);
+        /*builder = conn.createChild(RedisConstants.EDIT_CONNECTION, false);
+       
         builder.setAction(getEditConnectionAction(config));
         builder.setSerializable(false);
-        builder.build();
+        builder.build();*/
+      
         LOG.debug("Connection {} created", conn.getName());
 
         {
-            builder = conn.createChild(RedisConstants.QUERY, false);
+            builder = conn.createChild(RedisConstants.SET, false);
+            builder.setAction(setQueryAction(config));
+            builder.setSerializable(false);
+            builder.build();
+        }
+        {
+            builder = conn.createChild(RedisConstants.GET, false);
             builder.setAction(getQueryAction(config));
             builder.setSerializable(false);
             builder.build();
         }
-        {
-            builder = conn.createChild(RedisConstants.STREAMING_QUERY, false);
-            builder.setAction(getStreamingQueryAction(config));
-            builder.setSerializable(false);
-            builder.build();
-        }
-        if ("org.postgresql.Driver".equals(config.getDriverName())) {
+        /*      if ("org.postgresql.Driver".equals(config.getDriverName())) {
             builder = conn.createChild(RedisConstants.COPY, false);
             builder.setAction(getCopyAction(config));
             builder.setSerializable(false);
@@ -135,7 +152,10 @@ public class AddConnectionHandler extends ActionProvider implements
             builder.setSerializable(false);
             builder.build();
         }
-
+        
+*/	
+       
+      System.out.println("AddConnectionHandler - End method" );
         status.setValue(new Value("connection created"));
     }
 }

@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dsa.iot.dslink.node.Node;
 
+import redis.clients.jedis.JedisPoolConfig;
+
 public class RedisConfig {
     private String name;
     private String url;
@@ -15,6 +17,9 @@ public class RedisConfig {
     private Integer timeout;
     private String driverName;
     private BasicDataSource dataSource;
+	
+
+	private JedisPoolConfig jedisPoolConfig;
 
     public String getName() {
         return name;
@@ -92,7 +97,15 @@ public class RedisConfig {
         return dataSource;
     }
 
-    public void setDataSource(BasicDataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setDataSource(JedisPoolConfig jedisPoolConfig) {
+        this.jedisPoolConfig = jedisPoolConfig;
     }
+    
+    public JedisPoolConfig getJedisPoolConfig() {
+		return jedisPoolConfig;
+	}
+
+	public void setJedisPoolConfig(JedisPoolConfig jedisPoolConfig) {
+		this.jedisPoolConfig = jedisPoolConfig;
+	}
 }

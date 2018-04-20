@@ -7,6 +7,8 @@ import org.dsa.iot.redis.provider.RedisProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import redis.clients.jedis.Jedis;
+
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,24 +28,24 @@ public class RedisDslink extends DSLinkHandler {
 
     @Override
     public boolean isResponder() {
-    	System.out.println("In Main CLass - isResponder Method");
+    	
         return true;
     }
 
     @Override
     public void preInit() {
-    	System.out.println("In Main CLass - preInit Method");
+    
         try {
             URLClassLoader loader;
             {
                 ClassLoader l = RedisDslink.class.getClassLoader();
-            	System.out.println("L " + l);
+       
                 loader = (URLClassLoader) l;
-              
+            
             }
             URL[] urls = loader.getURLs();
             for (URL url : urls) {
-            	  System.out.println("URL " + url + " Loader " + loader);
+            
                 processUrl(loader, url);
             }
         } catch (Exception e) {
@@ -55,19 +57,22 @@ public class RedisDslink extends DSLinkHandler {
     }
 
     private void processUrl(ClassLoader loader, URL url) throws Exception {
-    	System.out.println("In Main CLass - processUrl Method " + url);
-        final String driverName = Driver.class.getName();
-     	System.out.println("driverName " + driverName);
+    	
+        final String driverName = Jedis.class.getName();
+     
         try (ZipInputStream zis = new ZipInputStream(url.openStream())) {
+      
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 {
+  
                     String name = entry.getName();
-                    if (entry.isDirectory()
-                            || !name.endsWith(driverName)) {
+                    if (entry.isDirectory()|| !name.endsWith(driverName)) { 
+                    
                         continue;
                     }
                 }
+            
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -80,6 +85,8 @@ public class RedisDslink extends DSLinkHandler {
                 }
                 String[] data = baos.toString("UTF-8").split("\n");
                 for (String clazzName : data) {
+                  System.out.println("Loader " + loader);
+                    System.out.println("clazzName " + clazzName);
                     registerDriver(loader, clazzName);
                 }
             }
@@ -87,7 +94,7 @@ public class RedisDslink extends DSLinkHandler {
     }
 
     private void registerDriver(ClassLoader loader, String clazzName) {
-    	System.out.println("In Main CLass - registerDriver Method");
+    
         try {
             clazzName = clazzName.trim();
             Class<?> clazz = loader.loadClass(clazzName);
@@ -115,7 +122,7 @@ public class RedisDslink extends DSLinkHandler {
     }
 
     public static void main(String[] args) {
-    	System.out.println("In Main CLass - Main Method");
+    	
         DSLinkFactory.start(args, new RedisDslink());
     }
 }

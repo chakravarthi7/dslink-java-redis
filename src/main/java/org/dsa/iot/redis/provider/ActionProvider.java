@@ -5,14 +5,15 @@ import org.dsa.iot.dslink.node.Permission;
 import org.dsa.iot.dslink.node.actions.Action;
 import org.dsa.iot.dslink.node.actions.EditorType;
 import org.dsa.iot.dslink.node.actions.Parameter;
-import org.dsa.iot.dslink.node.actions.ResultType;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
-import org.dsa.iot.redis.driver.RedisConnectionHelper;
-import org.dsa.iot.redis.handlers.*;
+import org.dsa.iot.redis.handlers.AddConnectionHandler;
+import org.dsa.iot.redis.handlers.DeleteConnectionHandler;
+import org.dsa.iot.redis.handlers.EditConnectionHandler;
+import org.dsa.iot.redis.handlers.GetQueryHandler;
+import org.dsa.iot.redis.handlers.SetQueryHandler;
 import org.dsa.iot.redis.model.RedisConfig;
 import org.dsa.iot.redis.model.RedisConstants;
-import org.dsa.iot.redis.postgres.PostgresCopyHandler;
 
 public class ActionProvider {
 
@@ -21,7 +22,7 @@ public class ActionProvider {
                 new DeleteConnectionHandler(manager));
     }
 
-    public Action getEditConnectionAction(RedisConfig config) {
+   /* public Action getEditConnectionAction(RedisConfig config) {
         Action action = new Action(Permission.READ, new EditConnectionHandler(
                 config));
         action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING,
@@ -38,18 +39,18 @@ public class ActionProvider {
         action.addParameter(new Parameter(RedisConstants.POOLABLE,
                 ValueType.BOOL, new Value(config.isPoolable())));
         return action;
-    }
+    }*/
 
     public Action getAddConnectionAction(NodeManager manager) {
-
+    	   System.out.println("In getAddConnectionAction Start" );
         Action action = new Action(Permission.READ, new AddConnectionHandler(
                 manager));
+        System.out.println(action.toString() );
         action.addParameter(new Parameter(RedisConstants.NAME, ValueType.STRING));
-        action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING).setPlaceHolder("jdbc:mysql://127.0.0.1:3306"));
+        action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING).setPlaceHolder("redis://127.0.0.1:6379"));
         action.addParameter(new Parameter(RedisConstants.USER, ValueType.STRING));
-        action.addParameter(new Parameter(RedisConstants.PASSWORD,
-                ValueType.STRING).setEditorType(EditorType.PASSWORD));
-        {
+        action.addParameter(new Parameter(RedisConstants.PASSWORD,ValueType.STRING).setEditorType(EditorType.PASSWORD));
+      /*  {
             String[] drivers = RedisConnectionHelper.getRegisteredDrivers();
             Value value;
             if (drivers.length > 0) {
@@ -61,13 +62,36 @@ public class ActionProvider {
                     .makeEnum(drivers), value));
         }
         action.addParameter(new Parameter(RedisConstants.DEFAULT_TIMEOUT,
-                ValueType.NUMBER));
+                ValueType.NUMBER));*/
         action.addParameter(new Parameter(RedisConstants.POOLABLE,
                 ValueType.BOOL, new Value(true)));
+        
+   
+        System.out.println("In getAddConnectionAction End" );
         return action;
+       
+    }
+    public Action setQueryAction(RedisConfig config) {
+        Action action = new Action(Permission.READ, new SetQueryHandler(
+                config));
+        action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+	  	action.addParameter(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+	  
+    	
+		return action;
+      
+    }
+    public Action getQueryAction(RedisConfig config) {
+    	  Action action = new Action(Permission.READ, new GetQueryHandler(
+                  config));
+    	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+  	    action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+      	
+  		return action;
+      
     }
 
-    public Action getStreamingQueryAction(RedisConfig config) {
+  /*  public Action getStreamingQueryAction(RedisConfig config) {
         Action action = new Action(Permission.READ, new StreamQueryHandler(config));
         action.addParameter(new Parameter(RedisConstants.SQL, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
         action.setResultType(ResultType.STREAM);
@@ -98,5 +122,5 @@ public class ActionProvider {
         }
         action.addResult(new Parameter(RedisConstants.ROWS_UPDATED, ValueType.NUMBER));
         return action;
-    }
+    }*/
 }

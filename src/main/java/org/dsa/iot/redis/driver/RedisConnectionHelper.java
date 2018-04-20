@@ -1,22 +1,60 @@
 package org.dsa.iot.redis.driver;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.dsa.iot.redis.model.RedisConfig;
-
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.dsa.iot.redis.model.RedisConfig;
+
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
 public class RedisConnectionHelper {
     private static String[] cashedDriversName;
 
-    public static BasicDataSource configureDataSource(RedisConfig config) {
+    public static JedisPoolConfig configureDataSource(RedisConfig config) {
+    	
+    	 System.out.println("In Poolable " + config.getName());
+         System.out.println("In Poolable " +config.getUrl());
+         System.out.println("In Poolable " +config.getUser());
+         System.out.println("In Poolable " +String.valueOf(config.getPassword()));
+         
+         
+     final JedisPoolConfig poolConfig = new JedisPoolConfig();
+   
+  
+     //  poolConfig.setMaxTotal(128);
+       poolConfig.setMaxIdle(128);
+       poolConfig.setMinIdle(16);
+       poolConfig.setTestOnBorrow(true);
+       poolConfig.setTestOnReturn(true);
+       poolConfig.setTestWhileIdle(true);
+       poolConfig.setMinEvictableIdleTimeMillis(1800000);
+       poolConfig.setTimeBetweenEvictionRunsMillis(1);
+       poolConfig.setNumTestsPerEvictionRun(3);
+    //   poolConfig.setBlockWhenExhausted(true);
+       
+       JedisPool jedisPool = new JedisPool(poolConfig, config.getUrl());
+    //   Jedis jedis = jedisPool.getResource();
+  System.out.println(jedisPool.getResource().ping());
+       return poolConfig;
+    
+        
+/*        
+        
+        
+        
+        
+        
+        
+        
         BasicDataSource dataSource = new BasicDataSource();
         // dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setDriverClassName(config.getDriverName());
+     //   dataSource.setDriverClassName(config.getDriverName());
         // dataSource.setUrl(jdbc:mysql://127.0.0.1:3306);
+       
         dataSource.setUrl(config.getUrl());
         dataSource.setUsername(config.getUser());
         dataSource.setPassword(String.valueOf(config.getPassword()));
@@ -30,7 +68,7 @@ public class RedisConnectionHelper {
         dataSource.setTimeBetweenEvictionRunsMillis(1);
         dataSource.setNumTestsPerEvictionRun(50);
         dataSource.setMinEvictableIdleTimeMillis(1800000);
-        return dataSource;
+        return dataSource;*/
     }
 
     public static String[] getRegisteredDrivers() {
