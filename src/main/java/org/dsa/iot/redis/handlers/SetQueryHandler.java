@@ -13,8 +13,6 @@ import org.dsa.iot.redis.model.RedisConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import redis.clients.jedis.Jedis;
-
 public class SetQueryHandler implements Handler<ActionResult> {
 	  private static final Logger LOG = LoggerFactory
 	            .getLogger(AddConnectionHandler.class);
@@ -52,27 +50,7 @@ public class SetQueryHandler implements Handler<ActionResult> {
 	        }
 	    }
 	        
-	  private Connection getConnection() throws SQLException {
-	        Connection connection;
-	        if (config.isPoolable()) {
-	            if (config.getJedisPoolConfig() == null) {
-	                config.setJedisPoolConfig(RedisConnectionHelper
-	                                             .configureDataSource(config));
-	            }
-	            connection = config.getDataSource().getConnection();
-	        } else {
-	            try {
-	                Class.forName(config.getDriverName());
-	            } catch (ClassNotFoundException e) {
-	                LOG.debug(e.getMessage());
-	            }
-
-	            connection = DriverManager.getConnection(config.getUrl(),
-	                                                     config.getUser(),
-	                                                     String.valueOf(config.getPassword()));
-	        }
-	        return connection;
-	    }
+	 
 	
 	
 	

@@ -1,25 +1,16 @@
 package org.dsa.iot.redis.driver;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.dsa.iot.redis.model.RedisConfig;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisConnectionHelper {
-    private static String[] cashedDriversName;
+   // private static String[] cashedDriversName;
 
     public static JedisPoolConfig configureDataSource(RedisConfig config) {
     	
-    	 System.out.println("In Poolable " + config.getName());
-         System.out.println("In Poolable " +config.getUrl());
-         System.out.println("In Poolable " +config.getUser());
-         System.out.println("In Poolable " +String.valueOf(config.getPassword()));
+    	
          
          
      final JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -34,11 +25,12 @@ public class RedisConnectionHelper {
        poolConfig.setMinEvictableIdleTimeMillis(1800000);
        poolConfig.setTimeBetweenEvictionRunsMillis(1);
        poolConfig.setNumTestsPerEvictionRun(3);
+   
     //   poolConfig.setBlockWhenExhausted(true);
-       
+      
        JedisPool jedisPool = new JedisPool(poolConfig, config.getUrl());
     //   Jedis jedis = jedisPool.getResource();
-  System.out.println(jedisPool.getResource().ping());
+       System.out.println(jedisPool.getResource().ping());
        return poolConfig;
     
         
@@ -71,7 +63,7 @@ public class RedisConnectionHelper {
         return dataSource;*/
     }
 
-    public static String[] getRegisteredDrivers() {
+  /*  public static String[] getRegisteredDrivers() {
         if (cashedDriversName == null) {
             Enumeration<Driver> drivers = DriverManager.getDrivers();
             Set<String> set = new HashSet<>();
@@ -85,5 +77,5 @@ public class RedisConnectionHelper {
             cashedDriversName = set.toArray(new String[set.size()]);
         }
         return cashedDriversName.clone();
-    }
+    }*/
 }

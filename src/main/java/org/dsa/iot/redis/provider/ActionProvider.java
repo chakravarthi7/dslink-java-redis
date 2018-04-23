@@ -47,7 +47,7 @@ public class ActionProvider {
                 manager));
         System.out.println(action.toString() );
         action.addParameter(new Parameter(RedisConstants.NAME, ValueType.STRING));
-        action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING).setPlaceHolder("redis://127.0.0.1:6379"));
+        action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING).setPlaceHolder("localhost"));
         action.addParameter(new Parameter(RedisConstants.USER, ValueType.STRING));
         action.addParameter(new Parameter(RedisConstants.PASSWORD,ValueType.STRING).setEditorType(EditorType.PASSWORD));
       /*  {

@@ -122,6 +122,7 @@ public class QueryHandler implements Handler<ActionResult> {
     }
 
     private Connection getConnection() throws SQLException {
+    	
         Connection connection;
         if (config.isPoolable()) {
             if (config.getDataSource() == null) {
