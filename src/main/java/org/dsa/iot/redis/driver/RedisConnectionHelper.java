@@ -2,7 +2,6 @@ package org.dsa.iot.redis.driver;
 
 import org.dsa.iot.redis.model.RedisConfig;
 
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisConnectionHelper {
@@ -14,9 +13,6 @@ public class RedisConnectionHelper {
          
          
      final JedisPoolConfig poolConfig = new JedisPoolConfig();
-   
-  
-     //  poolConfig.setMaxTotal(128);
        poolConfig.setMaxIdle(128);
        poolConfig.setMinIdle(16);
        poolConfig.setTestOnBorrow(true);
@@ -25,12 +21,12 @@ public class RedisConnectionHelper {
        poolConfig.setMinEvictableIdleTimeMillis(1800000);
        poolConfig.setTimeBetweenEvictionRunsMillis(1);
        poolConfig.setNumTestsPerEvictionRun(3);
-   
-    //   poolConfig.setBlockWhenExhausted(true);
-      
+    
+      /*
        JedisPool jedisPool = new JedisPool(poolConfig, config.getUrl());
-    //   Jedis jedis = jedisPool.getResource();
-       System.out.println(jedisPool.getResource().ping());
+       
+    //   Jedis jedis = poolConfig.getResource();
+       System.out.println(jedisPool.getResource().ping());*/
        return poolConfig;
     
         
@@ -78,4 +74,6 @@ public class RedisConnectionHelper {
         }
         return cashedDriversName.clone();
     }*/
+    
+    
 }

@@ -1,4 +1,4 @@
-package org.dsa.iot.redis.handlers;
+/*package org.dsa.iot.redis.handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -154,3 +154,4 @@ public class QueryHandler implements Handler<ActionResult> {
               .setValue(new Value(message));
     }
 }
+*/

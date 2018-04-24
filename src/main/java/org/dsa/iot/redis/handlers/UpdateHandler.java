@@ -1,4 +1,4 @@
-package org.dsa.iot.redis.handlers;
+/*package org.dsa.iot.redis.handlers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,9 +16,9 @@ import org.dsa.iot.redis.model.RedisConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+*//**
  * @author Samuel Grenier
- */
+ *//*
 public class UpdateHandler implements Handler<ActionResult> {
 
     private static final Logger LOG = LoggerFactory
@@ -119,3 +119,4 @@ public class UpdateHandler implements Handler<ActionResult> {
               .setValue(new Value(message));
     }
 }
+*/

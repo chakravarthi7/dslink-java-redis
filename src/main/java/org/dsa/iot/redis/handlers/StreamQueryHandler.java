@@ -1,4 +1,4 @@
-package org.dsa.iot.redis.handlers;
+/*package org.dsa.iot.redis.handlers;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.sql.Connection;
@@ -219,3 +219,4 @@ public class StreamQueryHandler implements Handler<ActionResult> {
         ALPHA_CHARS = tmp.toString().toCharArray();
     }
 }
+*/

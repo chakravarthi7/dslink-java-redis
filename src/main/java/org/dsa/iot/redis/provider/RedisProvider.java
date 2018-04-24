@@ -84,7 +84,7 @@ public class RedisProvider extends ActionProvider {
                 builder.build();
                 
                 builder = node.createChild(RedisConstants.GET, false);
-                builder.setAction(setQueryAction(config));
+                builder.setAction(getQueryAction(config));
                 builder.setSerializable(false);
                 builder.build();
 

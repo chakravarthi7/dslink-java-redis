@@ -9,7 +9,6 @@ import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
 import org.dsa.iot.redis.handlers.AddConnectionHandler;
 import org.dsa.iot.redis.handlers.DeleteConnectionHandler;
-import org.dsa.iot.redis.handlers.EditConnectionHandler;
 import org.dsa.iot.redis.handlers.GetQueryHandler;
 import org.dsa.iot.redis.handlers.SetQueryHandler;
 import org.dsa.iot.redis.model.RedisConfig;
@@ -82,7 +81,7 @@ public class ActionProvider {
       
     }
     public Action getQueryAction(RedisConfig config) {
-    	  Action action = new Action(Permission.READ, new GetQueryHandler(
+    	  Action action = new Action(Permission.WRITE, new GetQueryHandler(
                   config));
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
   	    action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));

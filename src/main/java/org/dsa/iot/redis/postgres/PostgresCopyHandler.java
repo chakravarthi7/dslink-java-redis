@@ -1,4 +1,4 @@
-package org.dsa.iot.redis.postgres;
+/*package org.dsa.iot.redis.postgres;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -21,9 +21,9 @@ import org.postgresql.copy.CopyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+*//**
  * @author Samuel Grenier
- */
+ *//*
 public class PostgresCopyHandler implements Handler<ActionResult> {
 
     private static final Logger LOG = LoggerFactory
@@ -132,3 +132,4 @@ public class PostgresCopyHandler implements Handler<ActionResult> {
               .setValue(new Value(message));
     }
 }
+*/

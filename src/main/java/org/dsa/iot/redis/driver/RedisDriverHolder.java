@@ -1,14 +1,14 @@
-package org.dsa.iot.redis.driver;
+/*package org.dsa.iot.redis.driver;
 
 import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-/**
+*//**
  * Container for jdbc driver
  *
  * @author pshvets
- */
+ *//*
 public class RedisDriverHolder implements Driver {
 
     private Driver driver;
@@ -54,3 +54,4 @@ public class RedisDriverHolder implements Driver {
     }
 
 }
+*/

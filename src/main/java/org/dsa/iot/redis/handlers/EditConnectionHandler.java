@@ -1,4 +1,4 @@
-package org.dsa.iot.redis.handlers;
+/*package org.dsa.iot.redis.handlers;
 
 import org.dsa.iot.dslink.node.Node;
 import org.dsa.iot.dslink.node.NodeBuilder;
@@ -79,8 +79,8 @@ public class EditConnectionHandler extends ActionProvider implements
 
         LOG.debug("New configuration is {}", config);
 
-     /*   Node edit = event.getNode();
-        edit.setAction(getEditConnectionAction(config));*/
+        Node edit = event.getNode();
+        edit.setAction(getEditConnectionAction(config));
 
         Node connection = config.getNode();
 
@@ -96,3 +96,4 @@ public class EditConnectionHandler extends ActionProvider implements
         connection.setPassword(config.getPassword());
     }
 }
+*/

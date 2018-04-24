@@ -7,16 +7,6 @@ import org.dsa.iot.redis.provider.RedisProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import redis.clients.jedis.Jedis;
-
-import java.io.ByteArrayOutputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 /**
  * Dslink to work with JDBC
  *
@@ -34,8 +24,8 @@ public class RedisDslink extends DSLinkHandler {
 
     @Override
     public void preInit() {
-    
-        try {
+    System.out.println("In REDIS DSLINK CLASS - PREINIT METHOD");
+      /*  try {
             URLClassLoader loader;
             {
                 ClassLoader l = RedisDslink.class.getClassLoader();
@@ -53,10 +43,10 @@ public class RedisDslink extends DSLinkHandler {
             msg += "Relying on Java's mechanism for driver ";
             msg += "initialization.";
             LOG.error(msg, e);
-        }
+        }*/
     }
 
-    private void processUrl(ClassLoader loader, URL url) throws Exception {
+   /* private void processUrl(ClassLoader loader, URL url) throws Exception {
     	
         final String driverName = Jedis.class.getName();
      
@@ -111,7 +101,7 @@ public class RedisDslink extends DSLinkHandler {
             String msg = "Failed to register driver: {}";
             LOG.warn(msg, clazzName, e);
         }
-    }
+    }*/
 
     @Override
     public void onResponderConnected(DSLink link) {

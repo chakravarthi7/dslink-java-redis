@@ -1,9 +1,5 @@
 package org.dsa.iot.redis.handlers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import org.dsa.iot.dslink.node.actions.ActionResult;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.util.handler.Handler;
@@ -13,11 +9,15 @@ import org.dsa.iot.redis.model.RedisConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
 public class SetQueryHandler implements Handler<ActionResult> {
 	  private static final Logger LOG = LoggerFactory
 	            .getLogger(AddConnectionHandler.class);
 
 	  private RedisConfig config;
+	
 
 	    public SetQueryHandler(RedisConfig config) {
 	        this.config = config;
@@ -28,20 +28,23 @@ public class SetQueryHandler implements Handler<ActionResult> {
 		// TODO Auto-generated method stub
 		System.out.println("In new method - Set query handler");
 		
-		  Value Key = event.getParameter(RedisConstants.KEY);
-	        Value value = event.getParameter(RedisConstants.VALUE);
+		  String Key = event.getParameter(RedisConstants.KEY).toString();
+	        String value = event.getParameter(RedisConstants.VALUE).toString();
 	        
 	        System.out.println(Key + "   " + value);
 	    
-	        if (Key != null && Key.getString() != null && !Key.getString().isEmpty()) {
+	        if (Key != null && Key.toString() != null && !Key.toString().isEmpty()) {
 	        		        	
-	        	 if (value != null && value.getString() != null && !value.getString().isEmpty()) {
+	        	 if (value != null && value.toString() != null && !value.toString().isEmpty()) {
 	        		 
-	        		//  Jedis Jedis=getConnection();
-	        		 
-	        	
+	        	        		
+	        		 	System.out.println(config.getUrl());
+	        		 	JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+	        		 	Jedis jedis=jedisPool.getResource();
+	        		 	jedis.set(Key, value); 
+	        		 	setStatusMessage("Value Inserted Scussesfull", null);
 	        	 }else {
-	        		  setStatusMessage("Key is empty", null);
+	        		  setStatusMessage("Value is empty", null);
 	        	 }
 	       
 	            
@@ -49,11 +52,6 @@ public class SetQueryHandler implements Handler<ActionResult> {
 	            setStatusMessage("Key is empty", null);
 	        }
 	    }
-	        
-	 
-	
-	
-	
 	        
 	   private void setStatusMessage(String message, Exception e) {
 	        if (e == null) {
