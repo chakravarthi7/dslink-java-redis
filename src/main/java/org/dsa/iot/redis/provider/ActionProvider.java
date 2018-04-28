@@ -5,11 +5,14 @@ import org.dsa.iot.dslink.node.Permission;
 import org.dsa.iot.dslink.node.actions.Action;
 import org.dsa.iot.dslink.node.actions.EditorType;
 import org.dsa.iot.dslink.node.actions.Parameter;
+import org.dsa.iot.dslink.node.actions.ResultType;
 import org.dsa.iot.dslink.node.value.Value;
 import org.dsa.iot.dslink.node.value.ValueType;
 import org.dsa.iot.redis.handlers.AddConnectionHandler;
 import org.dsa.iot.redis.handlers.DeleteConnectionHandler;
 import org.dsa.iot.redis.handlers.GetQueryHandler;
+import org.dsa.iot.redis.handlers.HashGetQueryHandler;
+import org.dsa.iot.redis.handlers.HashSetQueryHandler;
 import org.dsa.iot.redis.handlers.SetQueryHandler;
 import org.dsa.iot.redis.model.RedisConfig;
 import org.dsa.iot.redis.model.RedisConstants;
@@ -84,9 +87,33 @@ public class ActionProvider {
     	  Action action = new Action(Permission.WRITE, new GetQueryHandler(
                   config));
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-  	    action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-      	
+    	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING));
+      	  action.setResultType(ResultType.VALUES);
   		return action;
+      
+    }
+   
+    public Action hashsetQueryAction(RedisConfig config) {
+  	  Action action = new Action(Permission.WRITE, new HashSetQueryHandler(
+                config));
+  	
+  	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+  	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+	  action.addParameter(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+    	
+	  return action;
+    
+  }
+    
+    public Action hashgetQueryAction(RedisConfig config) {
+    	  Action action = new Action(Permission.WRITE, new HashGetQueryHandler(
+                  config));
+    	  
+    	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+    	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+  	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+      	
+  	  return action;
       
     }
 

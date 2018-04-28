@@ -15,6 +15,8 @@ public class RedisConstants {
     public static final String ROWS_UPDATED = "rows updated";
     public static final String KEY = "key";
     public static final String VALUE = "value";
+    public static final String FIELD = "field";
+    
 
     // Statuses
     public static final String STATUS = "status";
@@ -31,6 +33,8 @@ public class RedisConstants {
     public static final String UPDATE = "Update";
     public static final String SET = "Set";
     public static final String GET = "Get";
+    public static final String HSET = "Hset";
+    public static final String HGET = "Hget";
 
     // Postgres specific actions
     public static final String COPY = "Copy";

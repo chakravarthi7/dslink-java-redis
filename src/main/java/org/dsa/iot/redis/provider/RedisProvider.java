@@ -87,6 +87,17 @@ public class RedisProvider extends ActionProvider {
                 builder.setAction(getQueryAction(config));
                 builder.setSerializable(false);
                 builder.build();
+                
+                builder = node.createChild(RedisConstants.HSET, false);
+                builder.setAction(hashsetQueryAction(config));
+                builder.setSerializable(false);
+                builder.build();
+                
+                builder = node.createChild(RedisConstants.HGET, false);
+                builder.setAction(hashgetQueryAction(config));
+                builder.setSerializable(false);
+                builder.build();
+                
 
               /*  builder = node.createChild(RedisConstants.EDIT_CONNECTION, false);
                 builder.setAction(getEditConnectionAction(config));
