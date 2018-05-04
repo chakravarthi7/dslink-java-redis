@@ -45,8 +45,7 @@ public class ActionProvider {
 
     public Action getAddConnectionAction(NodeManager manager) {
     	   System.out.println("In getAddConnectionAction Start" );
-        Action action = new Action(Permission.READ, new AddConnectionHandler(
-                manager));
+        Action action = new Action(Permission.READ, new AddConnectionHandler(manager));
         System.out.println(action.toString() );
         action.addParameter(new Parameter(RedisConstants.NAME, ValueType.STRING));
         action.addParameter(new Parameter(RedisConstants.URL, ValueType.STRING).setPlaceHolder("localhost"));
@@ -74,8 +73,8 @@ public class ActionProvider {
        
     }
     public Action setQueryAction(RedisConfig config) {
-        Action action = new Action(Permission.READ, new SetQueryHandler(
-                config));
+    	
+        Action action = new Action(Permission.READ, new SetQueryHandler(config));
         action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
 	  	action.addParameter(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
 	  
@@ -84,18 +83,18 @@ public class ActionProvider {
       
     }
     public Action getQueryAction(RedisConfig config) {
-    	  Action action = new Action(Permission.WRITE, new GetQueryHandler(
-                  config));
+    	
+    	  Action action = new Action(Permission.WRITE, new GetQueryHandler(config));
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-    	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING));
-      	  action.setResultType(ResultType.VALUES);
+    //	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING));
+      	  action.setResultType(ResultType.TABLE);
   		return action;
       
     }
    
     public Action hashsetQueryAction(RedisConfig config) {
-  	  Action action = new Action(Permission.WRITE, new HashSetQueryHandler(
-                config));
+    	
+  	  Action action = new Action(Permission.READ, new HashSetQueryHandler(config));
   	
   	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
   	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
@@ -106,13 +105,13 @@ public class ActionProvider {
   }
     
     public Action hashgetQueryAction(RedisConfig config) {
-    	  Action action = new Action(Permission.WRITE, new HashGetQueryHandler(
-                  config));
+    	
+    	  Action action = new Action(Permission.WRITE, new HashGetQueryHandler(config));
     	  
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
     	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-  	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-      	
+  //  	  action.addResult(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+    	  action.setResultType(ResultType.TABLE);
   	  return action;
       
     }

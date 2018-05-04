@@ -26,32 +26,43 @@ public class SetQueryHandler implements Handler<ActionResult> {
 	@Override
 	public void handle(ActionResult event) {
 		// TODO Auto-generated method stub
-		System.out.println("In new method - Set query handler");
+		//System.out.println("In new method - Set query handler");
 		
-		  String Key = event.getParameter(RedisConstants.KEY).toString();
-	        String value = event.getParameter(RedisConstants.VALUE).toString();
-	        
+		String Key=null , value = null;
+		try {
+			 Key = event.getParameter(RedisConstants.KEY).toString();
+	         value = event.getParameter(RedisConstants.VALUE).toString();
+		}catch(Exception e) {
+			setStatusMessage("Invalid Input",  e);
+		}
+		
 	        System.out.println(Key + "   " + value);
 	    
-	        if (Key != null && Key.toString() != null && !Key.toString().isEmpty()) {
+	    if (Key != null &&  !Key.isEmpty()) {
 	        		        	
-	        	 if (value != null && value.toString() != null && !value.toString().isEmpty()) {
+	    	if (value != null  && !value.isEmpty()) {
 	        		 
-	        	        		
-	        		 	System.out.println(config.getUrl());
-	        		 	JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
-	        		 	Jedis jedis=jedisPool.getResource();
-	        		 	jedis.set(Key, value); 
-	        		 	setStatusMessage("Value Inserted Scussesfull", null);
-	        	 }else {
-	        		  setStatusMessage("Value is empty", null);
-	        	 }
+	    		
+	    		try {  
+	    			JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+	      		 	Jedis jedis=jedisPool.getResource();
+	       		 	jedis.set(Key, value); 
+	       		 	setStatusMessage("Value Inserted Scussesfull", null);
+	       	    }catch(Exception e) {
+	        		  	        	                    }
+	    		finally{
+	    		
+	    	        	}
 	       
-	            
-	        } else {
-	            setStatusMessage("Key is empty", null);
-	        }
-	    }
+	    	}else {
+	           setStatusMessage("Value is empty", null);
+	              }
+	       
+	   } else {
+	       setStatusMessage("Key is empty", null);
+	          }
+
+}
 	        
 	   private void setStatusMessage(String message, Exception e) {
 	        if (e == null) {

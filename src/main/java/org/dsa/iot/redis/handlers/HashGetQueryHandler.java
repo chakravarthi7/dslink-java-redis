@@ -1,7 +1,11 @@
 package org.dsa.iot.redis.handlers;
 
 import org.dsa.iot.dslink.node.actions.ActionResult;
+import org.dsa.iot.dslink.node.actions.Parameter;
+import org.dsa.iot.dslink.node.actions.table.Row;
+import org.dsa.iot.dslink.node.actions.table.Table;
 import org.dsa.iot.dslink.node.value.Value;
+import org.dsa.iot.dslink.node.value.ValueType;
 import org.dsa.iot.dslink.util.handler.Handler;
 import org.dsa.iot.redis.driver.RedisConnectionHelper;
 import org.dsa.iot.redis.model.RedisConfig;
@@ -49,7 +53,20 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 		        		 	
 		        		    System.out.println("Inside " + Field + "    "+Key+ "  "+ Value);
 		        		//	  setStatusMessage("Set Value Sucessfully", null);
-
+		        		    Table table = event.getTable();
+		            		
+		        		 	if(Value != null) {
+		        		 		ValueType type = ValueType.STRING;
+		        		 		Parameter p = new Parameter("Value", type);
+		        		 		table.addColumn(p);
+		        		 		Row row = new Row();
+		        	            row.addValue(new Value(Value));
+		        	       //     System.out.println(row.getValues());
+		        	            table.addRow(row);
+		        	          
+		        	        //    System.out.println(table.getRows());
+		        		 	//	System.out.println(val);
+		        		 	}
 		        	 	            
 		        } else {
 		        	System.out.println("Key is empty");
