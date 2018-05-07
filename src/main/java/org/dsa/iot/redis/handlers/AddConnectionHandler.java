@@ -64,14 +64,6 @@ public class AddConnectionHandler extends ActionProvider implements
         Value password = event.getParameter(RedisConstants.PASSWORD, new Value(""));
     
 
-      /*  Value driver = event.getParameter(RedisConstants.DRIVER, new Value(""));
-        if (driver.getString() == null || driver.getString().isEmpty()) {
-            status.setValue(new Value("driver is empty"));
-            return;
-        }*/
-
-   /*     Value timeout = event.getParameter(RedisConstants.DEFAULT_TIMEOUT,
-                                           new Value(60));*/
         Value poolable = event.getParameter(RedisConstants.POOLABLE);
 
         RedisConfig config = new RedisConfig();
@@ -79,15 +71,13 @@ public class AddConnectionHandler extends ActionProvider implements
         config.setUrl(url.getString());
         config.setUser(user.getString());
         config.setPassword(password.getString().toCharArray());
-      //  config.setPoolable(poolable.getBool());
-       // config.setTimeout((Integer) timeout.getNumber());
-      //  config.setDriverName(driver.getString());
+    
         LOG.debug(config.toString());
-        System.out.println(url.getString());
-    //  Jedis jedis = new Jedis(url.getString()); 
+   
+   
         // create DataSource if specified
       if (poolable.getBool()) {
-    	  System.out.println("In poolable - action connection handler");
+    	
             config.setJedisPoolConfig(RedisConnectionHelper
                                          .configureDataSource(config));
         }
@@ -97,12 +87,10 @@ public class AddConnectionHandler extends ActionProvider implements
         object.put(RedisConstants.URL, config.getUrl());
         object.put(RedisConstants.USER, config.getUser());
         object.put(RedisConstants.POOLABLE, config.isPoolable());
-        System.out.println("object "+object.toString());
-      /*   object.put(RedisConstants.DEFAULT_TIMEOUT, config.getTimeout());
-        object.put(RedisConstants.DRIVER, config.getDriverName());*/
-        
+     
+    
         NodeBuilder builder = manager.createRootNode(name.getString());
-        System.out.println("builder "+builder);
+     
         builder.setAttribute(RedisConstants.ACTION, new Value(true));
         builder.setAttribute(RedisConstants.CONFIGURATION, new Value(object));
         builder.setPassword(password.getString().toCharArray());
@@ -110,7 +98,7 @@ public class AddConnectionHandler extends ActionProvider implements
         config.setNode(conn);
 
         Node connStatus = conn.createChild(RedisConstants.STATUS, false).build();
-        System.out.println("connStatus "+connStatus);
+       
         connStatus.setValueType(ValueType.STRING);
         connStatus.setValue(new Value(RedisConstants.CREATED));
 
@@ -120,11 +108,6 @@ public class AddConnectionHandler extends ActionProvider implements
         builder.setSerializable(false);
         builder.build();
 
-        /*builder = conn.createChild(RedisConstants.EDIT_CONNECTION, false);
-       
-        builder.setAction(getEditConnectionAction(config));
-        builder.setSerializable(false);
-        builder.build();*/
       
         LOG.debug("Connection {} created", conn.getName());
 
@@ -140,22 +123,24 @@ public class AddConnectionHandler extends ActionProvider implements
             builder.setSerializable(false);
             builder.build();
         }
-        /*      if ("org.postgresql.Driver".equals(config.getDriverName())) {
-            builder = conn.createChild(RedisConstants.COPY, false);
-            builder.setAction(getCopyAction(config));
+        {
+        	builder = conn.createChild(RedisConstants.HSET, false);
+            builder.setAction(hashsetQueryAction(config));
             builder.setSerializable(false);
             builder.build();
         }
         {
-            builder = conn.createChild(RedisConstants.UPDATE, false);
-            builder.setAction(getUpdateAction(config));
+            builder = conn.createChild(RedisConstants.HGET, false);
+            builder.setAction(hashgetQueryAction(config));
             builder.setSerializable(false);
             builder.build();
+            
+        	
+        	
         }
-        
-*/	
+     
        
-      System.out.println("AddConnectionHandler - End method" );
+   
         status.setValue(new Value("connection created"));
     }
 }

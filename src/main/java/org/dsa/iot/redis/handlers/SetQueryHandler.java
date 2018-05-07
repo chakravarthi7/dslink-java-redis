@@ -26,33 +26,40 @@ public class SetQueryHandler implements Handler<ActionResult> {
 	@Override
 	public void handle(ActionResult event) {
 		// TODO Auto-generated method stub
-		//System.out.println("In new method - Set query handler");
+	
+		Jedis jedis=null;
+		JedisPool jedisPool=null;
+		String key=null , value = null;
 		
-		String Key=null , value = null;
 		try {
-			 Key = event.getParameter(RedisConstants.KEY).toString();
+			 key = event.getParameter(RedisConstants.KEY).toString();
 	         value = event.getParameter(RedisConstants.VALUE).toString();
 		}catch(Exception e) {
-			setStatusMessage("Invalid Input",  e);
+			setStatusMessage("Invalid Input",  null);
 		}
-		
-	        System.out.println(Key + "   " + value);
+
 	    
-	    if (Key != null &&  !Key.isEmpty()) {
+	    if (key != null &&  !key.isEmpty()) {
 	        		        	
 	    	if (value != null  && !value.isEmpty()) {
 	        		 
-	    		
-	    		try {  
-	    			JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
-	      		 	Jedis jedis=jedisPool.getResource();
-	       		 	jedis.set(Key, value); 
-	       		 	setStatusMessage("Value Inserted Scussesfull", null);
-	       	    }catch(Exception e) {
-	        		  	        	                    }
-	    		finally{
-	    		
-	    	        	}
+	    			try {  
+	    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+	    				jedis=jedisPool.getResource();
+	    				
+	    				boolean keyexist=jedis.exists(key);
+	    				if(keyexist != true) {
+	    					jedis.set(key, value); 
+		    				setStatusMessage("Value Inserted Scussesfull", null);
+	    				}else
+	    					setStatusMessage("Key Already Exists", null);
+	    				
+	    			}catch(Exception e) {
+	    				setStatusMessage("Error at Jedis connection", null);}
+	    			finally {
+	    				if (jedis != null) {
+	    					jedisPool.returnResource(jedis);
+	    					}}
 	       
 	    	}else {
 	           setStatusMessage("Value is empty", null);

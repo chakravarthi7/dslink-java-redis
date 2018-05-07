@@ -28,57 +28,58 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 	@Override
 	public void handle(ActionResult event) {
 		// TODO Auto-generated method stub
-		 System.out.println("In new method -HASH set query handler");
-		 String Field = null,Key = null,Value = null;
+	
+		 String field = null,key = null,value = null;
+		 JedisPool jedisPool =null;
+		 Jedis jedis=null;
+		 
 		 try {
-			
-		   Key = event.getParameter(RedisConstants.KEY).toString();
-		   Field = event.getParameter(RedisConstants.FIELD).toString();
-		   Value = event.getParameter(RedisConstants.VALUE).toString();
+			 key = event.getParameter(RedisConstants.KEY).toString();
+			 field = event.getParameter(RedisConstants.FIELD).toString();
+			 value = event.getParameter(RedisConstants.VALUE).toString();
 		 } catch(Exception e){
-			 System.out.println("Input Issue");
-			 setStatusMessage("Input Issue", null);
+			 setStatusMessage("Invalid Input", null);
 		 }
-		  System.out.println(Field + "    "+Key+ "  "+ Value);
-		  
-		  if (Key != null && Key.toString() != null && !Key.toString().isEmpty()) {
-		  
-		   if (Field != null && Field.toString() != null && !Field.toString().isEmpty()) {
+		 
 		  
 		  
-	        	
-	       if (Value != null && Value.toString() != null && !Value.toString().isEmpty()) {
+		  if (key != null &&  !key.isEmpty()) {
+		  
+			  if (field != null  && !field.isEmpty()) {
+		  
+				  if (value != null && !value.isEmpty()) {
 	        		 
-	        	    		
-	        		 	System.out.println(config.getUrl());
-	        		 	JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
-	        		 	Jedis jedis=jedisPool.getResource();
-	        		 	Long x=jedis.hset(Key, Field, Value);
-	        		 	if(x==0)
-	        		 		System.out.println("value updated");
-	        		 	else
-	        		 		System.out.println("value inserted");
-	        		 	
-	        		 	setStatusMessage("Value Inserted Scussesfull", null);
-	        		 	
-	        		   System.out.println("Inside " + Field + "    "+Key+ "  "+ Value);
-	        		//	  setStatusMessage("Set Value Sucessfully", null);
-
+					  try {  
+		    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+		    				jedis=jedisPool.getResource();
+		    			
+		    				boolean keyexist = jedis.hexists(key, field);
+		    				
+		    				if (keyexist != true) {
+		    					jedis.hset(key, field, value);
+		    					setStatusMessage("Value Inserted", null);
+		    				}	    				
+		        		 	else
+		        		 		setStatusMessage("Key or field already exists", null);
+		    				
+		    			}catch(Exception e) {
+		    					setStatusMessage("Error at Jedis connection", null);}
+		    			finally {
+		    				if (jedis != null) {
+		    					jedisPool.returnResource(jedis);
+		    					}}
 	        	 }else {
-	        		 System.out.println("Value is empty");
 	        		  setStatusMessage("Value is empty", null);
 	        	 }
-	       
-	            
+	       	            
 	        } else {
-	        	System.out.println("Key is empty");
-	            setStatusMessage("Key is empty", null);
+	        	setStatusMessage("Field is empty", null);
 	        }
+			  
 	    }else {
-	    	System.out.println("HName is empty");
-	    	setStatusMessage("HName is empty", null);
+	    	setStatusMessage("Key is empty", null);
 	    }
-			}
+}
 	
 	 private void setStatusMessage(String message, Exception e) { 
 	        if (e == null) {
@@ -86,8 +87,7 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 	        } else {
 	            LOG.warn(message, e);
 	        }
-	    	//System.out.println("In Set Status Message  "+  config.getNode().getChild(RedisConstants.STATUS, false));
-	        config.getNode().getChild(RedisConstants.STATUS, false)
+	    	config.getNode().getChild(RedisConstants.STATUS, false)
 	              .setValue(new Value(message));
 	    }
 	   

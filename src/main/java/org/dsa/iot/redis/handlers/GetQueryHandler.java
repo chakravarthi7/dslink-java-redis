@@ -1,6 +1,5 @@
 package org.dsa.iot.redis.handlers;
 
-import org.dsa.iot.dslink.methods.StreamState;
 import org.dsa.iot.dslink.node.actions.ActionResult;
 import org.dsa.iot.dslink.node.actions.Parameter;
 import org.dsa.iot.dslink.node.actions.table.Row;
@@ -35,32 +34,38 @@ public class GetQueryHandler implements Handler<ActionResult> {
 	@Override
 	public void handle(ActionResult event) {
 		// TODO Auto-generated method stub
-		  System.out.println("In new method - get query handler");
-		  
-		  String Key = event.getParameter(RedisConstants.KEY).toString();
-		  
-		  Value val= null;
 		 
-		  	System.out.println("The Key Value " +Key );
+		  Value val= null;
+		  String key=null;
+		  JedisPool jedisPool =null;
+		  Jedis jedis=null;
 		  
-		    if (Key != null && Key.toString() != null && !Key.toString().isEmpty()) {
+		  try {
+			  key = event.getParameter(RedisConstants.KEY).toString();
+		  }catch(Exception e) {
+			  setStatusMessage("Invalid Input",  null);
+		  }
+		  
+		 
+		 	  
+		    if (key != null && !key.isEmpty()) {
+		    	
+		    	
+		    	try {  
+    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+    				jedis=jedisPool.getResource();
+    				String Value1=jedis.get(key);
+        		 	val=new Value(Value1);
+    				setStatusMessage("Got Value Scussesfull", null);
+    			}catch(Exception e) {
+    				setStatusMessage("Error at Jedis connection", null);}
+    			finally {
+    				if (jedis != null) {
+    					jedisPool.returnResource(jedis);
+    					}}
+       
 	        	
-		    	System.out.println(config.getUrl());
-    		 	JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
-    		 	Jedis jedis=jedisPool.getResource();
-    		 	String Value1=jedis.get(Key);
-    		 	val=new Value(Value1);
-    		 	
-    		 		
-    		 	System.out.println("The output Value "+Value1);
-    		 	
-    		 	 config.getNode().getChild(RedisConstants.STATUS, false).setValue(val);
-    		 	
-                  
-               //   builder.setAction(hashgetQueryAction(config));
-    		 	 
-    		 	 System.out.println(config.getNode().getChild(RedisConstants.VALUE, false));
-    		 	 Table table = event.getTable();
+		    	Table table = event.getTable();
     		
     		 	if(val != null) {
     		 		ValueType type = ValueType.STRING;
@@ -68,14 +73,9 @@ public class GetQueryHandler implements Handler<ActionResult> {
     		 		table.addColumn(p);
     		 		Row row = new Row();
     	            row.addValue(val);
-    	       //     System.out.println(row.getValues());
     	            table.addRow(row);
-    	          
-    	        //    System.out.println(table.getRows());
-    		 	//	System.out.println(val);
-    		 	}
-    		
-	           
+    	          }
+    	           
 	        } else {
 	            setStatusMessage("Key is empty", null);
 	        }
@@ -88,8 +88,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
 	        } else {
 	            LOG.warn(message, e);
 	        }
-	    //	System.out.println("In Set Status Message  "+  config.getNode().getChild(RedisConstants.STATUS, false));
-	        config.getNode().getChild(RedisConstants.STATUS, false)
+	         config.getNode().getChild(RedisConstants.STATUS, false)
 	              .setValue(new Value(message));
 	    }
 	 

@@ -34,25 +34,35 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 	@Override
 	public void handle(ActionResult event) {
 		// TODO Auto-generated method stub
-		  System.out.println("In new method -HASH get query handler");
-		  String Field = event.getParameter(RedisConstants.FIELD).toString();
-		  String Key = event.getParameter(RedisConstants.KEY).toString();
+			
+		String  key =null , field=null , Value=null;
+		JedisPool jedisPool =null;
+		Jedis jedis=null;
+		
+		try {
+		   field = event.getParameter(RedisConstants.FIELD).toString();
+		   key = event.getParameter(RedisConstants.KEY).toString();
+		} catch(Exception e) {
+			setStatusMessage("Invalid Input", null);
+		}
 		  
-		  		if (Key != null && Key.toString() != null && !Key.toString().isEmpty()) {
+		
+		if (key != null  && !key.isEmpty()) {
 			  
-		  		if (Field != null && Field.toString() != null && !Field.toString().isEmpty()) {
+		  		if (field != null && !field.isEmpty()) {
 			  
-			  		     	        	    		
-		        		 	System.out.println(config.getUrl());
-		        		 	JedisPool jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
-		        		 	Jedis jedis=jedisPool.getResource();
-		        		 	String Value=jedis.hget(Key, Field);
-		        		 	System.out.println(Value);
-		        		 	
-		        		 	setStatusMessage("Value Inserted Scussesfull", null);
-		        		 	
-		        		    System.out.println("Inside " + Field + "    "+Key+ "  "+ Value);
-		        		//	  setStatusMessage("Set Value Sucessfully", null);
+		  		  try {  
+	    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
+	    				jedis=jedisPool.getResource();
+	    				Value=jedis.hget(key, field);
+	    				setStatusMessage("Get Value Sucessfully", null);
+	    			}catch(Exception e) {
+	    					setStatusMessage("Error at Jedis connection", null);}
+	    			finally {
+	    				if (jedis != null) {
+	    					jedisPool.returnResource(jedis);
+	    					}} 	  
+		  		 
 		        		    Table table = event.getTable();
 		            		
 		        		 	if(Value != null) {
@@ -61,23 +71,19 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 		        		 		table.addColumn(p);
 		        		 		Row row = new Row();
 		        	            row.addValue(new Value(Value));
-		        	       //     System.out.println(row.getValues());
 		        	            table.addRow(row);
-		        	          
-		        	        //    System.out.println(table.getRows());
-		        		 	//	System.out.println(val);
-		        		 	}
+		        	       	}else {
+		        	       	 setStatusMessage("value is null", null);
+		        	       	}
 		        	 	            
 		        } else {
-		        	System.out.println("Key is empty");
-		            setStatusMessage("Key is empty", null);
+		        	 setStatusMessage("field is empty", null);
 		        }
 		    }else {
-		    	System.out.println("HName is empty");
-		    	setStatusMessage("HName is empty", null);
+		    	setStatusMessage("Key is empty", null);
 		    }
 		  
-		        setStatusMessage("Get Value Sucessfully", null);
+		 
   }
 
 	private void setStatusMessage(String message, Exception e) { 
@@ -86,7 +92,6 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 	        } else {
 	            LOG.warn(message, e);
 	        }
-	    	System.out.println("In Set Status Message  "+  config.getNode().getChild(RedisConstants.STATUS, false));
 	        config.getNode().getChild(RedisConstants.STATUS, false)
 	              .setValue(new Value(message));
 	    }
