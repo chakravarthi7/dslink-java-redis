@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Dslink to work with JDBC
+ * Dslink to work with Redis
  *
  * @author pshvets
  */

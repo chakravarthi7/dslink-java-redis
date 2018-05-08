@@ -54,9 +54,14 @@ public class GetQueryHandler implements Handler<ActionResult> {
 		    	try {  
     				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
     				jedis=jedisPool.getResource();
+    				boolean keyexist=jedis.exists(key);
+    				if(keyexist == true) {
     				String Value1=jedis.get(key);
         		 	val=new Value(Value1);
+        		 	setOutput(val, event);
     				setStatusMessage("Got Value Scussesfull", null);
+    				}else
+    					setStatusMessage("Key Not Exists",null);
     			}catch(Exception e) {
     				setStatusMessage("Error at Jedis connection", null);}
     			finally {
@@ -65,22 +70,29 @@ public class GetQueryHandler implements Handler<ActionResult> {
     					}}
        
 	        	
-		    	Table table = event.getTable();
-    		
-    		 	if(val != null) {
-    		 		ValueType type = ValueType.STRING;
-    		 		Parameter p = new Parameter("Value", type);
-    		 		table.addColumn(p);
-    		 		Row row = new Row();
-    	            row.addValue(val);
-    	            table.addRow(row);
-    	          }
+		    
     	           
 	        } else {
 	            setStatusMessage("Key is empty", null);
 	        }
 
      }
+	
+	public void setOutput(Value val , ActionResult event) {
+		
+		Table table = event.getTable();
+		
+	 	if(val != null) {
+	 		ValueType type = ValueType.STRING;
+	 		Parameter p = new Parameter("Value", type);
+	 		table.addColumn(p);
+	 		Row row = new Row();
+            row.addValue(val);
+            table.addRow(row);
+          }else
+        	  setStatusMessage("Value is Null", null);
+		
+	}
 
 	   private void setStatusMessage(String message, Exception e) { 
 	        if (e == null) {

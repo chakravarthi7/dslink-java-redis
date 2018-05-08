@@ -54,7 +54,7 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 		    				jedis=jedisPool.getResource();
 		    			
 		    				boolean keyexist = jedis.hexists(key, field);
-		    				
+		    			
 		    				if (keyexist != true) {
 		    					jedis.hset(key, field, value);
 		    					setStatusMessage("Value Inserted", null);
@@ -68,17 +68,14 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 		    				if (jedis != null) {
 		    					jedisPool.returnResource(jedis);
 		    					}}
-	        	 }else {
+	        	 }else 
 	        		  setStatusMessage("Value is empty", null);
-	        	 }
-	       	            
-	        } else {
+	        		       	            
+	        } else 
 	        	setStatusMessage("Field is empty", null);
-	        }
-			  
-	    }else {
+	        			  
+	    }else 
 	    	setStatusMessage("Key is empty", null);
-	    }
 }
 	
 	 private void setStatusMessage(String message, Exception e) { 

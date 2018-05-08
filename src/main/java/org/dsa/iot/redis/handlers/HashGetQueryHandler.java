@@ -54,8 +54,13 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 		  		  try {  
 	    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
 	    				jedis=jedisPool.getResource();
+	    				boolean keyexist = jedis.hexists(key, field);
+	    				if(keyexist == true) {
 	    				Value=jedis.hget(key, field);
+	    				setOutput(Value,event);
 	    				setStatusMessage("Get Value Sucessfully", null);
+	    				}else
+	    					setStatusMessage("Key Not Exists",null);
 	    			}catch(Exception e) {
 	    					setStatusMessage("Error at Jedis connection", null);}
 	    			finally {
@@ -63,18 +68,7 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 	    					jedisPool.returnResource(jedis);
 	    					}} 	  
 		  		 
-		        		    Table table = event.getTable();
-		            		
-		        		 	if(Value != null) {
-		        		 		ValueType type = ValueType.STRING;
-		        		 		Parameter p = new Parameter("Value", type);
-		        		 		table.addColumn(p);
-		        		 		Row row = new Row();
-		        	            row.addValue(new Value(Value));
-		        	            table.addRow(row);
-		        	       	}else {
-		        	       	 setStatusMessage("value is null", null);
-		        	       	}
+		        	
 		        	 	            
 		        } else {
 		        	 setStatusMessage("field is empty", null);
@@ -85,6 +79,23 @@ public class HashGetQueryHandler implements Handler<ActionResult> {
 		  
 		 
   }
+	
+	public void setOutput(String Value , ActionResult event) {
+		
+	    Table table = event.getTable();
+		
+	 	if(Value != null) {
+	 		ValueType type = ValueType.STRING;
+	 		Parameter p = new Parameter("Value", type);
+	 		table.addColumn(p);
+	 		Row row = new Row();
+            row.addValue(new Value(Value));
+            table.addRow(row);
+       	}else {
+       	 setStatusMessage("value is null", null);
+       	}
+		
+	}
 
 	private void setStatusMessage(String message, Exception e) { 
 	        if (e == null) {

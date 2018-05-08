@@ -34,7 +34,7 @@ public class RedisProvider extends ActionProvider {
         NodeBuilder builder = superRoot
                 .createChild(RedisConstants.ADD_CONNECTION_ACTION, false);
         System.out.println("builder " + builder.toString());
-        NodeBuilder xy=   builder.setAction(getAddConnectionAction(manager));
+        builder.setAction(getAddConnectionAction(manager));
        
         builder.build();
 
