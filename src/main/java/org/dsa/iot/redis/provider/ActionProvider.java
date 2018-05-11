@@ -19,6 +19,7 @@ import org.dsa.iot.redis.model.RedisConstants;
 
 public class ActionProvider {
 
+	Value db=new Value(0);
     public Action getDeleteConnectionAction(NodeManager manager) {
         return new Action(Permission.READ,
                 new DeleteConnectionHandler(manager));
@@ -41,11 +42,11 @@ public class ActionProvider {
        
     }
     public Action setQueryAction(RedisConfig config) {
-    	
+    
         Action action = new Action(Permission.READ, new SetQueryHandler(config));
         action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
 	  	action.addParameter(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
-	  
+	  	action.addParameter((new Parameter(RedisConstants.DATABASE,ValueType.NUMBER).setDefaultValue(db)));
     	
 		return action;
       
@@ -54,6 +55,7 @@ public class ActionProvider {
     	
     	  Action action = new Action(Permission.WRITE, new GetQueryHandler(config));
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+    	  action.addParameter((new Parameter(RedisConstants.DATABASE,ValueType.NUMBER).setDefaultValue(db)));
        	  action.setResultType(ResultType.TABLE);
   		return action;
       
@@ -66,6 +68,7 @@ public class ActionProvider {
   	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
   	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
 	  action.addParameter(new Parameter(RedisConstants.VALUE, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+	  action.addParameter((new Parameter(RedisConstants.DATABASE,ValueType.NUMBER).setDefaultValue(db)));
     	
 	  return action;
     
@@ -77,6 +80,7 @@ public class ActionProvider {
     	  
     	  action.addParameter(new Parameter(RedisConstants.KEY, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
     	  action.addParameter(new Parameter(RedisConstants.FIELD, ValueType.STRING).setEditorType(EditorType.TEXT_AREA));
+    	  action.addParameter((new Parameter(RedisConstants.DATABASE,ValueType.NUMBER).setDefaultValue(db)));
     	  action.setResultType(ResultType.TABLE);
   	  return action;
       

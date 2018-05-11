@@ -39,9 +39,10 @@ public class GetQueryHandler implements Handler<ActionResult> {
 		  String key=null;
 		  JedisPool jedisPool =null;
 		  Jedis jedis=null;
-		  
+		  int dbvalue=0;
 		  try {
 			  key = event.getParameter(RedisConstants.KEY).toString();
+			  dbvalue=(int) event.getParameter(RedisConstants.DATABASE).getNumber();
 		  }catch(Exception e) {
 			  setStatusMessage("Invalid Input",  null);
 		  }
@@ -54,6 +55,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
 		    	try {  
     				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
     				jedis=jedisPool.getResource();
+    				jedis.select(dbvalue);
     				boolean keyexist=jedis.exists(key);
     				if(keyexist == true) {
     				String Value1=jedis.get(key);

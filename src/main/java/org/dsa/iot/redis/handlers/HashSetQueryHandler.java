@@ -32,11 +32,12 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 		 String field = null,key = null,value = null;
 		 JedisPool jedisPool =null;
 		 Jedis jedis=null;
-		 
+		 int dbvalue=0;
 		 try {
 			 key = event.getParameter(RedisConstants.KEY).toString();
 			 field = event.getParameter(RedisConstants.FIELD).toString();
 			 value = event.getParameter(RedisConstants.VALUE).toString();
+			 dbvalue=(int) event.getParameter(RedisConstants.DATABASE).getNumber();
 		 } catch(Exception e){
 			 setStatusMessage("Invalid Input", null);
 		 }
@@ -52,7 +53,7 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 					  try {  
 		    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
 		    				jedis=jedisPool.getResource();
-		    			
+		    				jedis.select(dbvalue);
 		    				boolean keyexist = jedis.hexists(key, field);
 		    			
 		    				if (keyexist != true) {
@@ -76,6 +77,7 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 	        			  
 	    }else 
 	    	setStatusMessage("Key is empty", null);
+	    
 }
 	
 	 private void setStatusMessage(String message, Exception e) { 
