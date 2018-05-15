@@ -55,6 +55,9 @@ public class GetQueryHandler implements Handler<ActionResult> {
 		    	try {  
     				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
     				jedis=jedisPool.getResource();
+    				if(dbvalue < 0 || dbvalue>15 ) {
+    					setStatusMessage("DB Value must between 0 to 15", null);
+    				}else {
     				jedis.select(dbvalue);
     				boolean keyexist=jedis.exists(key);
     				if(keyexist == true) {
@@ -63,7 +66,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
         		 	setOutput(val, event);
     				setStatusMessage("Got Value Scussesfull", null);
     				}else
-    					setStatusMessage("Key Not Exists",null);
+    					setStatusMessage("Key Not Exists",null);}
     			}catch(Exception e) {
     				setStatusMessage("Error at Jedis connection", null);}
     			finally {

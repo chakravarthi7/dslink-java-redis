@@ -53,6 +53,9 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 					  try {  
 		    				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
 		    				jedis=jedisPool.getResource();
+		    				if(dbvalue < 0 || dbvalue>15 ) {
+		    					setStatusMessage("DB Value must between 0 to 15", null);
+		    				}else {
 		    				jedis.select(dbvalue);
 		    				boolean keyexist = jedis.hexists(key, field);
 		    			
@@ -62,7 +65,7 @@ public class HashSetQueryHandler implements Handler<ActionResult> {
 		    				}	    				
 		        		 	else
 		        		 		setStatusMessage("Key or field already exists", null);
-		    				
+		    				}
 		    			}catch(Exception e) {
 		    					setStatusMessage("Error at Jedis connection", null);}
 		    			finally {
