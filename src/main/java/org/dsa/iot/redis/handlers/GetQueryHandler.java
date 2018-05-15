@@ -47,7 +47,9 @@ public class GetQueryHandler implements Handler<ActionResult> {
 			  setStatusMessage("Invalid Input",  null);
 		  }
 		  
-		 
+			if(dbvalue < 0  || dbvalue>15 ) {
+				setStatusMessage("Db Value is must between 0 to 15 ", null);
+			}else {
 		 	  
 		    if (key != null && !key.isEmpty()) {
 		    	
@@ -55,9 +57,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
 		    	try {  
     				jedisPool = new JedisPool(RedisConnectionHelper.configureDataSource(config), config.getUrl());
     				jedis=jedisPool.getResource();
-    				if(dbvalue < 0 || dbvalue>15 ) {
-    					setStatusMessage("DB Value must between 0 to 15", null);
-    				}else {
+    				
     				jedis.select(dbvalue);
     				boolean keyexist=jedis.exists(key);
     				if(keyexist == true) {
@@ -66,7 +66,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
         		 	setOutput(val, event);
     				setStatusMessage("Got Value Scussesfull", null);
     				}else
-    					setStatusMessage("Key Not Exists",null);}
+    					setStatusMessage("Key Not Exists",null);
     			}catch(Exception e) {
     				setStatusMessage("Error at Jedis connection", null);}
     			finally {
@@ -80,7 +80,7 @@ public class GetQueryHandler implements Handler<ActionResult> {
 	        } else {
 	            setStatusMessage("Key is empty", null);
 	        }
-
+			}
      }
 	
 	public void setOutput(Value val , ActionResult event) {
